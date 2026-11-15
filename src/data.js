@@ -85,6 +85,10 @@ export function participants(id, role) {
   return rows(() => supabase.from('scheduledfor').select(`${participantColumns(role)},client(person(${people}))`).eq('appointmentid', id).order('clientid'));
 }
 
+export function recordedAttendance() {
+  return rows(() => supabase.from('scheduledfor').select('kept').not('kept', 'is', null).order('appointmentid').order('clientid'));
+}
+
 export function addAppointment(values) {
   return result(supabase.from('appointment').insert(values).select('appointmentid').single());
 }

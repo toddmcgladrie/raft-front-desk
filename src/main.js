@@ -110,10 +110,10 @@ async function lookup(area, role) {
 }
 
 async function summary(area, role) {
-  const [clients, visits, team, spaces, staff] = await Promise.all([
-    data.clients(), data.appointments({ clinical: false }), data.counselors(), data.rooms(), role.wages ? data.employees(role) : [],
+  const [clients, visits, team, spaces, staff, attendance] = await Promise.all([
+    data.clients(), data.appointments({ clinical: false }), data.counselors(), data.rooms(), role.wages ? data.employees(role) : [], data.recordedAttendance(),
   ]);
-  if (area.isConnected) area.innerHTML = view.dashboard({ clientCount: clients.length, visits, team, spaces, staff }, role);
+  if (area.isConnected) area.innerHTML = view.dashboard({ clientCount: clients.length, visits, team, spaces, staff, attendance }, role);
 }
 
 function wageEditor(staff) {

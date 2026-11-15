@@ -67,8 +67,9 @@ export function clientProfile({ client, memberships, familyRoles, visits }, role
 
 export const keptLabel = (kept) => kept === true ? 'Kept' : kept === false ? 'Not kept' : 'Attendance pending';
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const percent = new Intl.NumberFormat('en-US', { style: 'percent' });
 
-export function dashboard({ clientCount, visits, team, spaces, staff }, role) {
+export function dashboard({ clientCount, visits, team, spaces, staff, attendance }, role) {
   const byCounselor = new Map();
   const byRoom = new Map();
   for (const visit of visits) {
@@ -76,9 +77,13 @@ export function dashboard({ clientCount, visits, team, spaces, staff }, role) {
     byRoom.set(visit.roomnumber, (byRoom.get(visit.roomnumber) ?? 0) + 1);
   }
   const stats = [['Clients', clientCount], ['Appointments', visits.length], ['Rooms used', byRoom.size]];
+  const kept = attendance.filter((entry) => entry.kept === true).length;
+  const attendanceRate = attendance.length ? percent.format(kept / attendance.length) : '—';
+  const attendanceDetail = attendance.length ? `${kept} of ${attendance.length} client visits with attendance recorded` : 'No attendance recorded';
   const counselorRows = team.map((entry) => [escape(name(entry.person)), byCounselor.get(entry.counselorid) ?? 0]);
   const roomRows = spaces.map((entry) => [value(entry.roomname, `Room ${entry.roomnumber}`), byRoom.get(entry.roomnumber) ?? 0]);
-  return `<div class="stat-grid">${stats.map(([label, total]) => `<div class="stat"><p>${label}</p><strong>${total.toLocaleString()}</strong></div>`).join('')}</div>
+  return `<div class="stat-grid">${stats.map(([label, total]) => `<div class="stat"><p>${label}</p><strong>${total.toLocaleString()}</strong></div>`).join('')}
+    <div class="stat"><p>Visits kept</p><strong>${attendanceRate}</strong><small>${attendanceDetail}</small></div></div>
     <div class="panel-grid"><section class="panel"><h2>Appointments by counselor</h2>${counselorRows.length ? table(['Counselor', 'Appointments'], counselorRows, 'Appointments by counselor') : message('No counselors recorded.')}</section>
     <section class="panel"><h2>Appointments by room</h2>${roomRows.length ? table(['Room', 'Appointments'], roomRows, 'Appointments by room') : message('No rooms recorded.')}</section></div>
     ${role.wages ? `<section class="panel"><h2>Employee wages</h2>${staff.length ? table(['Employee', 'Wage'], staff.map((entry) => [escape(name(entry.person)), entry.wage == null ? '—' : money.format(entry.wage)]), 'Employee wages') : message('No employee wages recorded.')}</section>` : ''}`;

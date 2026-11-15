@@ -7,7 +7,7 @@ A four-screen staff website for the Richmond Area Family Therapy sample database
 - **AI tool.** OpenAI Codex.
 - **First prompt.** Use the [First Four Screens assignment brief](https://byu.instructure.com/courses/36313/assignments/1520478) to build the full site from the RAFT 3 implementation solution and publish it through GitHub. The user supplied the existing Supabase project separately.
 - **What needed fixing.** Codex initially expected the project to contain the course schema. The audit found an earlier four-table version. Its records were preserved in `raft_before_first_four_screens` before installing the 12-table course schema. The lookup and record picker show saved appointment dates, including the course's 2024 sample appointments.
-- **Step 7.** The follow-up change and live verification are pending the first deployment.
+- **Step 7.** After the first deployment, Codex added the Dashboard’s **Visits kept** metric. It shows the percentage of scheduled client visits marked kept and uses only entries with a recorded attendance result, so pending visits do not lower the rate.
 
 ## Local run
 
